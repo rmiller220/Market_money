@@ -1,9 +1,9 @@
 FactoryBot.define do
   factory :vendor do
-    name { Faker::Vendor.name }
-    description { Faker::Vendor.description }
+    name { Faker::Artist.name }
+    description { Faker::Quote.famous_last_words }  
     contact_name { Faker::Vendor.contact_name }
-    contact_phone { Faker::Vendor.contact_phone }
-    credit_accepted { Faker::Vendor.credit_accepted }
+    contact_phone { Faker::Sports::Basketball.player }
+    credit_accepted { Faker::Boolean.boolean(true_ratio: 0.7) }
   end
 end
