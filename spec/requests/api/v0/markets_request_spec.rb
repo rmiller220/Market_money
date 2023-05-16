@@ -171,33 +171,4 @@ describe 'Markets API' do
     expect(response.status).to eq(404)
     expect(market[:errors][0][:detail]).to eq("Couldn't find Market with 'id'=123123123123")
   end
-
-  # it 'can create a new market' do
-  #   market_params = ({
-  #     :id=>159,
-  #     :name=>"Adams-Parker",
-  #     :street=>"2693 Shantell Ranch",
-  #     :city=>"Kingstad",
-  #     :county=>"Autumn Acres",
-  #     :state=>"Oregon",
-  #     :zip=>"19879",
-  #     :lat=>"29.04595430113882",
-  #     :lon=>"153.54201849872737"})
-
-  #   headers = {"CONTENT_TYPE" => "application/json"}
-
-  #   post "/api/v0/markets", headers: headers, params: JSON.generate(market_params)
-  #   created_market = Market.last
-  #   # require 'pry'; binding.pry
-  #   expect(response).to be_successful
-  #   expect(response.status).to eq(200)
-  #   expect(created_market.name).to eq(market_params[:name])
-  #   expect(created_market.street).to eq(market_params[:street])
-  #   expect(created_market.city).to eq(market_params[:city])
-  #   expect(created_market.county).to eq(market_params[:county])
-  #   expect(created_market.state).to eq(market_params[:state])
-  #   expect(created_market.zip).to eq(market_params[:zip])
-  #   expect(created_market.lat).to eq(market_params[:lat])
-  #   expect(created_market.lon).to eq(market_params[:lon])
-  # end
 end

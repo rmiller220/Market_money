@@ -21,7 +21,7 @@ class Api::V0::VendorsController < ApplicationController
       render json:  {
         "errors": [
               {
-                "detail": "Couldn't find Market with 'id'=#{params[:id]}"
+                "detail": "Couldn't find Vendor with 'id'=#{params[:id]}"
               }
           ]
       }, status: 404
@@ -31,16 +31,34 @@ class Api::V0::VendorsController < ApplicationController
   end
 
   def create
-    if vendor_params[:name].nil? || vendor_params[:description].nil? || vendor_params[:contact_name].nil? || vendor_params[:contact_phone].nil? || vendor_params[:credit_accepted].nil?
+    vendor = Vendor.new(vendor_params)
+    if vendor.save 
+      render json: VendorSerializer.new(Vendor.create(vendor_params)), status: 201
+      
+    else 
       render json:  {
         "errors": [
               {
-                "detail": "Must fill in all fields correctly"
+                "detail": "#{vendor.errors.full_messages.to_sentence}"
               }
           ]
       }, status: 400
-    else render json: VendorSerializer.new(Vendor.create(vendor_params)), status: 201
       
+    end
+  end
+
+  def update
+    vendor = Vendor.find_by_id(params[:id])
+    if vendor.update(vendor_params)
+      render json: VendorSerializer.new(Vendor.update(params[:id], vendor_params)), status: 200
+    else
+      render json:  {
+        "errors": [
+              {
+                "detail": "#{vendor.errors.full_messages.to_sentence}"
+              }
+          ]
+      }, status: 400
     end
   end
 
