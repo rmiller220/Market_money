@@ -16,9 +16,7 @@ class Api::V0::VendorsController < ApplicationController
   end
 
   def show
-    require 'pry'; binding.pry
     vendor = Vendor.find_by_id(params[:id])
-# require 'pry'; binding.pry
     if vendor.nil?
       render json:  {
         "errors": [
@@ -33,18 +31,17 @@ class Api::V0::VendorsController < ApplicationController
   end
 
   def create
-    render json: VendorSerializer.new(Vendor.create(vendor_params))
-    # if Vendor.save(vendor_params)
-
-    # else
-    #   render json:  {
-    #     "errors": [
-    #           {
-    #             "detail": "Validation failed: Contact name can't be blank, Contact phone can't be blank"
-    #           }
-    #       ]
-    #   }, status: 400
-    # end
+    if vendor_params[:name].nil? || vendor_params[:description].nil? || vendor_params[:contact_name].nil? || vendor_params[:contact_phone].nil? || vendor_params[:credit_accepted].nil?
+      render json:  {
+        "errors": [
+              {
+                "detail": "Must fill in all fields correctly"
+              }
+          ]
+      }, status: 400
+    else render json: VendorSerializer.new(Vendor.create(vendor_params)), status: 201
+      
+    end
   end
 
 
