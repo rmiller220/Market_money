@@ -5,7 +5,7 @@ class Api::V0::MarketsController < ApplicationController
 
   def show
     market = Market.find_by_id(params[:id])
-    # require 'pry'; binding.pry
+
     if market.nil?
       render json:  {
         "errors": [

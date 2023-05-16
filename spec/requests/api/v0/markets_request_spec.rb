@@ -8,7 +8,7 @@ describe 'Markets API' do
     expect(response).to be_successful
 
     markets = JSON.parse(response.body, symbolize_names: true)
-    # require 'pry'; binding.pry
+
     expect(markets).to be_a(Hash)
     expect(markets).to have_key(:data)
     expect(markets[:data].count).to eq(3)
@@ -62,6 +62,8 @@ describe 'Markets API' do
 
     market = JSON.parse(response.body, symbolize_names: true)
     
+    expect(response).to be_successful
+    
     expect(market).to be_a(Hash)
     expect(market).to have_key(:data)
 
@@ -98,6 +100,70 @@ describe 'Markets API' do
   it 'sad path for market show' do
 
     get "/api/v0/markets/123123123123"
+
+    market = JSON.parse(response.body, symbolize_names: true)
+
+    expect(response).to_not be_successful
+    expect(response.status).to eq(404)
+    expect(market[:errors][0][:detail]).to eq("Couldn't find Market with 'id'=123123123123")
+  end
+
+  it 'can get all vendors for a market' do
+    market = create(:market)
+    vendor1 = create(:vendor)
+    vendor2 = create(:vendor)
+    vendor3 = create(:vendor)
+    market.vendors << vendor1
+    market.vendors << vendor2
+
+    get "/api/v0/markets/#{market.id}/vendors"
+
+    market_vendors = JSON.parse(response.body, symbolize_names: true)
+
+    expect(response).to be_successful
+    
+    expect(market_vendors).to be_a(Hash)
+    expect(market_vendors).to have_key(:data)
+    expect(market_vendors[:data].count).to eq(2)
+
+    expect(market_vendors[:data][0]).to be_an(Hash)
+    expect(market_vendors[:data][0]).to have_key(:id)
+    expect(market_vendors[:data][0][:id]).to be_an(String)
+    expect(market_vendors[:data][0][:id]).to eq(vendor1.id.to_s)
+    expect(market.vendors[0].id).to eq(vendor1.id)
+
+    expect(market_vendors[:data][0]).to have_key(:attributes)
+    expect(market_vendors[:data][0][:attributes]).to have_key(:name)
+    expect(market_vendors[:data][0][:attributes][:name]).to be_a(String)
+    expect(market_vendors[:data][0][:attributes][:name]).to eq(vendor1.name)
+    expect(market.vendors[0].name).to eq(vendor1.name)
+
+    expect(market_vendors[:data][0][:attributes]).to have_key(:description)
+    expect(market_vendors[:data][0][:attributes][:description]).to be_a(String)
+    expect(market_vendors[:data][0][:attributes][:description]).to eq(vendor1.description)
+    expect(market.vendors[0].description).to eq(vendor1.description)
+
+    expect(market_vendors[:data][0][:attributes]).to have_key(:contact_name)
+    expect(market_vendors[:data][0][:attributes][:contact_name]).to be_a(String)
+    expect(market_vendors[:data][0][:attributes][:contact_name]).to eq(vendor1.contact_name)
+    expect(market.vendors[0].contact_name).to eq(vendor1.contact_name)
+
+    expect(market_vendors[:data][0][:attributes]).to have_key(:contact_phone)
+    expect(market_vendors[:data][0][:attributes][:contact_phone]).to be_a(String)
+    expect(market_vendors[:data][0][:attributes][:contact_phone]).to eq(vendor1.contact_phone)
+    expect(market.vendors[0].contact_phone).to eq(vendor1.contact_phone)
+
+    expect(market_vendors[:data][0][:attributes]).to have_key(:credit_accepted)
+    expect(market_vendors[:data][0][:attributes][:credit_accepted]).to be_in([true, false])
+    expect(market_vendors[:data][0][:attributes][:credit_accepted]).to eq(vendor1.credit_accepted)
+    expect(market.vendors[0].credit_accepted).to eq(vendor1.credit_accepted)
+
+    expect(vendor3).to_not be_in(market.vendors)
+  end
+
+  it 'sad path for market vendors' do
+
+    get "/api/v0/markets/123123123123/vendors"
 
     market = JSON.parse(response.body, symbolize_names: true)
 
