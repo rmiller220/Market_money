@@ -4,6 +4,7 @@ class Api::V0::VendorsController < ApplicationController
   end
 
   def show
+    render json: Market.find(params[:id])
     render json: Vendor.find(params[:id])
   end
 end

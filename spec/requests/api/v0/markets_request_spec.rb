@@ -8,79 +8,101 @@ describe 'Markets API' do
     expect(response).to be_successful
 
     markets = JSON.parse(response.body, symbolize_names: true)
+    # require 'pry'; binding.pry
+    expect(markets).to be_a(Hash)
+    expect(markets).to have_key(:data)
+    expect(markets[:data].count).to eq(3)
 
-    expect(markets.count).to eq(3)
+    markets[:data].each do |market|
 
-    markets.each do |market|
+      expect(market).to be_an(Hash)
+      expect(market).to have_key(:attributes)
 
       expect(market).to have_key(:id)
-      expect(market[:id]).to be_an(Integer)
+      expect(market[:id]).to be_an(String)
 
-      expect(market).to have_key(:name)
-      expect(market[:name]).to be_a(String)
+      expect(market[:attributes]).to have_key(:name)
+      expect(market[:attributes][:name]).to be_a(String)
 
-      expect(market).to have_key(:street)
-      expect(market[:street]).to be_a(String)
+      expect(market[:attributes]).to have_key(:street)
+      expect(market[:attributes][:street]).to be_a(String)
       
-      expect(market).to have_key(:city)
-      expect(market[:city]).to be_a(String)
+      expect(market[:attributes]).to have_key(:city)
+      expect(market[:attributes][:city]).to be_a(String)
       
-      expect(market).to have_key(:county)
-      expect(market[:county]).to be_a(String)
+      expect(market[:attributes]).to have_key(:county)
+      expect(market[:attributes][:county]).to be_a(String)
 
-      expect(market).to have_key(:state)
-      expect(market[:state]).to be_a(String)
+      expect(market[:attributes]).to have_key(:state)
+      expect(market[:attributes][:state]).to be_a(String)
       
-      expect(market).to have_key(:zip)
-      expect(market[:zip]).to be_a(String)
+      expect(market[:attributes]).to have_key(:zip)
+      expect(market[:attributes][:zip]).to be_a(String)
 
-      expect(market).to have_key(:lat)
-      expect(market[:lat]).to be_a(String)
+      expect(market[:attributes]).to have_key(:lat)
+      expect(market[:attributes][:lat]).to be_a(String)
       
-      expect(market).to have_key(:lon)
-      expect(market[:lon]).to be_a(String)
+      expect(market[:attributes]).to have_key(:lon)
+      expect(market[:attributes][:lon]).to be_a(String)
     end
   end
 
   it 'can get one market by its id' do
-    id = create(:market).id
+    market1 = Market.create({:id=>159,
+    :name=>"Adams-Parker",
+    :street=>"2693 Shantell Ranch",
+    :city=>"Kingstad",
+    :county=>"Autumn Acres",
+    :state=>"Oregon",
+    :zip=>"19879",
+    :lat=>"29.04595430113882",
+    :lon=>"153.54201849872737"})
 
-    get "/api/v0/markets/#{id}"
+    get "/api/v0/markets/#{market1.id}"
 
     market = JSON.parse(response.body, symbolize_names: true)
+    
+    expect(market).to be_a(Hash)
+    expect(market).to have_key(:data)
 
     expect(response).to be_successful
 
-    expect(market).to have_key(:id)
-    expect(market[:id]).to eq(id)
+    expect(market[:data]).to have_key(:id)
+    expect(market[:data][:id]).to eq("159")
 
-    expect(market).to have_key(:name)
-    expect(market[:name]).to be_a(String)
+    expect(market[:data][:attributes]).to have_key(:name)
+    expect(market[:data][:attributes][:name]).to eq("Adams-Parker")
 
-    expect(market).to have_key(:street)
-    expect(market[:street]).to be_a(String)
+    expect(market[:data][:attributes]).to have_key(:street)
+    expect(market[:data][:attributes][:street]).to eq("2693 Shantell Ranch")
     
-    expect(market).to have_key(:city)
-    expect(market[:city]).to be_a(String)
+    expect(market[:data][:attributes]).to have_key(:city)
+    expect(market[:data][:attributes][:city]).to eq("Kingstad")
     
-    expect(market).to have_key(:county)
-    expect(market[:county]).to be_a(String)
+    expect(market[:data][:attributes]).to have_key(:county)
+    expect(market[:data][:attributes][:county]).to eq("Autumn Acres")
 
-    expect(market).to have_key(:state)
-    expect(market[:state]).to be_a(String)
+    expect(market[:data][:attributes]).to have_key(:state)
+    expect(market[:data][:attributes][:state]).to eq("Oregon")
     
-    expect(market).to have_key(:zip)
-    expect(market[:zip]).to be_a(String)
+    expect(market[:data][:attributes]).to have_key(:zip)
+    expect(market[:data][:attributes][:zip]).to eq("19879")
 
-    expect(market).to have_key(:lat)
-    expect(market[:lat]).to be_a(String)
+    expect(market[:data][:attributes]).to have_key(:lat)
+    expect(market[:data][:attributes][:lat]).to eq("29.04595430113882")
     
-    expect(market).to have_key(:lon)
-    expect(market[:lon]).to be_a(String)
+    expect(market[:data][:attributes]).to have_key(:lon)
+    expect(market[:data][:attributes][:lon]).to eq("153.54201849872737")
   end
 
-  xit 'can get all vendors for a specific market' do
-    id = create(:market).id
-    
+  it 'sad path for market show' do
+
+    get "/api/v0/markets/123123123123"
+
+    market = JSON.parse(response.body, symbolize_names: true)
+
+    expect(response).to_not be_successful
+    expect(response.status).to eq(404)
+    expect(market[:errors][0][:detail]).to eq("Couldn't find Market with 'id'=123123123123")
   end
 end

@@ -193,14 +193,14 @@
         "lines": [
           1,
           1,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
-          5,
+          4,
+          4,
+          4,
+          4,
+          4,
+          4,
+          4,
+          4,
           null,
           null
         ]
@@ -238,6 +238,10 @@
           1,
           1,
           1,
+          null,
+          1,
+          4,
+          null,
           null
         ]
       },
@@ -256,7 +260,19 @@
           null,
           null,
           1,
+          2,
+          null,
+          2,
           1,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          1,
+          null,
           null,
           null
         ]
@@ -266,8 +282,33 @@
           1,
           null
         ]
+      },
+      "/Users/reillymiller/turing_work/mod3/market_money/app/serializers/market_serializer.rb": {
+        "lines": [
+          1,
+          1,
+          1,
+          null,
+          null
+        ]
+      },
+      "/Users/reillymiller/turing_work/mod3/market_money/app/models/market_vendor.rb": {
+        "lines": [
+          1,
+          1,
+          1,
+          null
+        ]
+      },
+      "/Users/reillymiller/turing_work/mod3/market_money/app/models/vendor.rb": {
+        "lines": [
+          1,
+          1,
+          1,
+          null
+        ]
       }
     },
-    "timestamp": 1684184999
+    "timestamp": 1684199939
   }
 }
