@@ -19,13 +19,7 @@ class Api::V0::MarketsController < ApplicationController
     end
   end
 
-  # def create
-  #   render json: MarketSerializer.new(Market.create(market_params))
-  # end
-
-  # private
-
-  #   def market_params
-  #     params.require(:market).permit(:name, :street, :city, :county, :state, :zip, :lat, :lon)
-  #   end
+  def search
+    
+  end
 end

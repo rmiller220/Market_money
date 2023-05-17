@@ -62,6 +62,21 @@ class Api::V0::VendorsController < ApplicationController
     end
   end
 
+  def destroy
+    vendor = Vendor.find_by_id(params[:id])
+
+    if vendor.nil?
+      render json:  {
+        "errors": [
+              {
+                "detail": "Could not find Vendor with 'id'=#{params[:id]}"
+              }
+          ]
+      }, status: 400
+    else
+      render json: VendorSerializer.new(Vendor.destroy(params[:id])), status: 204
+    end
+  end
 
   private
     def vendor_params

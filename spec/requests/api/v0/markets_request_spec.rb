@@ -171,4 +171,36 @@ describe 'Markets API' do
     expect(response.status).to eq(404)
     expect(market[:errors][0][:detail]).to eq("Couldn't find Market with 'id'=123123123123")
   end
+
+  it 'can search for markets' do
+    market1 = Market.create({:id=>159,
+      :name=>"Adams-Parker",
+      :street=>"2693 Shantell Ranch",
+      :city=>"Kingstad",
+      :county=>"Autumn Acres",
+      :state=>"Oregon",
+      :zip=>"19879",
+      :lat=>"29.04595430113882",
+      :lon=>"153.54201849872737"})
+
+    market2 = Market.create({id: 455,
+      name: "Schmidt, Hintz and Rempel",
+      street: "377 Von Plains",
+      city: "Chaston",
+      county: "Royal Square",
+      state: "New York",
+      zip: "31983-5120",
+      lat: "-22.547007464861437",
+      lon: "102.72548129421153"})
+    
+    get "/api/v0/markets/search?name=Adams-Parker"
+    
+    market_search = JSON.parse(response.body, symbolize_names: true)
+    require 'pry'; binding.pry
+  end
+
+  it 'cannot search for markets by just city or city/name' do
+
+  end
+
 end
