@@ -162,4 +162,32 @@ describe 'Vendors API' do
     expect(response).to_not be_successful
     expect(vendor_response[:errors][0][:detail]).to eq("Name can't be blank")
   end
+
+  it "can delete an existing vendor" do
+    vendor = Vendor.create!({
+      name: "Seurat",
+      description: "Hurrah for anarchy! This is the happiest moment of my life.",
+      contact_name: "Bradley Beal",
+      contact_phone: "1-741-620-5747",
+      credit_accepted: true
+      })    
+    expect(Vendor.count).to eq(1)
+    id = vendor.id
+
+    delete "/api/v0/vendors/#{id}"
+
+    expect(response).to be_successful
+    expect(Vendor.count).to eq(0)
+    expect{Vendor.find(id)}.to raise_error(ActiveRecord::RecordNotFound)
+  end
+
+  it 'sad path: cannot delete a vendor that does not exist' do
+    delete "/api/v0/vendors/123123123123"
+
+    vendor = JSON.parse(response.body, symbolize_names: true)
+
+    expect(response).to_not be_successful
+    expect(response.status).to eq(400)
+    expect(vendor[:errors][0][:detail]).to eq("Could not find Vendor with 'id'=123123123123")
+  end
 end
