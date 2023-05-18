@@ -172,7 +172,7 @@ describe 'Markets API' do
     expect(market[:errors][0][:detail]).to eq("Couldn't find Market with 'id'=123123123123")
   end
 
-  it 'can search for markets' do
+  it 'can search for markets by state, name, city' do
     market1 = Market.create({:id=>159,
       :name=>"Adams-Parker",
       :street=>"2693 Shantell Ranch",
@@ -192,15 +192,185 @@ describe 'Markets API' do
       zip: "31983-5120",
       lat: "-22.547007464861437",
       lon: "102.72548129421153"})
-    
-    get "/api/v0/markets/search?name=Adams-Parker"
+    query = {city: "Chaston", name: "Schmidt, Hintz and Rempel", state: "New York"}
+
+    get "/api/v0/markets/search", params: query
     
     market_search = JSON.parse(response.body, symbolize_names: true)
+
+    expect(response).to be_successful
+    expect(response.status).to eq(200)
+
+    expect(market_search).to be_a(Hash)
+    expect(market_search).to have_key(:data)
+    expect(market_search[:data].count).to eq(1)
+    expect(market_search[:data]).to be_an(Array)
+
+    expect(market_search[:data][0]).to be_an(Hash)
+    expect(market_search[:data][0]).to have_key(:id)
+    expect(market_search[:data][0][:id]).to be_an(String)
+    expect(market_search[:data][0][:id]).to eq(market2.id.to_s)
+
+    expect(market_search[:data][0]).to have_key(:attributes)
+    expect(market_search[:data][0][:attributes]).to have_key(:name)
+    expect(market_search[:data][0][:attributes][:name]).to be_a(String)
+    expect(market_search[:data][0][:attributes][:name]).to eq(market2.name)
+
+    expect(market_search[:data][0][:attributes]).to have_key(:city)
+    expect(market_search[:data][0][:attributes][:city]).to be_a(String)
+    expect(market_search[:data][0][:attributes][:city]).to eq(market2.city)
+
+    expect(market_search[:data][0][:attributes]).to have_key(:state)
+    expect(market_search[:data][0][:attributes][:state]).to be_a(String)
+    expect(market_search[:data][0][:attributes][:state]).to eq(market2.state)
+  end
+
+  it 'can search for markets by state and city' do
+    market1 = create(:market, state: "Oregon", name: "Adams-Parker", city: "Kingstad")
+
+    market2 = create(:market, state: "New York", name: "Schmidt, Hintz and Rempel", city: "Chaston")
+
+    market3 = create(:market, state: "New York", name: "Bob the Builder", city: "Brooklyn")
+
+    get "/api/v0/markets/search", params: {city: "Chaston", state: "New York"}
+
+    market_search = JSON.parse(response.body, symbolize_names: true)
+
+    expect(response).to be_successful
+    expect(response.status).to eq(200)
+    expect(market_search).to be_a(Hash)
+    expect(market_search).to have_key(:data)
+    expect(market_search[:data].count).to eq(1)
+    expect(market_search[:data]).to be_an(Array)
+    expect(market_search[:data][0]).to be_an(Hash)
+    expect(market_search[:data][0]).to have_key(:id)
+    expect(market_search[:data][0][:id]).to eq(market2.id.to_s)
+  end
+
+  it 'can search for markets by state' do
+    market1 = create(:market, state: "Oregon", name: "Adams-Parker", city: "Kingstad")
+
+    market2 = create(:market, state: "New York", name: "Schmidt, Hintz and Rempel", city: "Chaston")
+
+    market3 = create(:market, state: "New York", name: "Bob the Builder", city: "Brooklyn")
+
+    get "/api/v0/markets/search", params: {state: "New York"}
+    
+    market_search = JSON.parse(response.body, symbolize_names: true)
+
+    expect(response).to be_successful
+    expect(response.status).to eq(200)
+    expect(market_search).to be_a(Hash)
+    expect(market_search).to have_key(:data)
+    expect(market_search[:data].count).to eq(2)
+    expect(market_search[:data]).to be_an(Array)
+    expect(market_search[:data][0]).to be_an(Hash)
+    expect(market_search[:data][0]).to have_key(:id)
+    expect(market_search[:data][0][:id]).to eq(market2.id.to_s)
+    expect(market_search[:data][1][:id]).to eq(market3.id.to_s)
+  end
+
+  it 'can search for markets by state and name' do
+    market1 = create(:market, state: "Oregon", name: "Adams-Parker", city: "Kingstad")
+
+    market2 = create(:market, state: "New York", name: "Schmidt, Hintz and Rempel", city: "Chaston")
+
+    market3 = create(:market, state: "New York", name: "Bob the Builder", city: "Brooklyn")
+
+    get "/api/v0/markets/search", params: {state: "New York", name: "Bob the Builder"}
+    
+    market_search = JSON.parse(response.body, symbolize_names: true)
+
+    expect(response).to be_successful
+    expect(response.status).to eq(200)
+    expect(market_search).to be_a(Hash)
+    expect(market_search).to have_key(:data)
+    expect(market_search[:data].count).to eq(1)
+    expect(market_search[:data]).to be_an(Array)
+    expect(market_search[:data][0]).to be_an(Hash)
+    expect(market_search[:data][0]).to have_key(:id)
+    expect(market_search[:data][0][:id]).to eq(market3.id.to_s)
+  end
+
+  it 'can search for markets by name' do
+    market1 = create(:market, state: "Oregon", name: "Adams-Parker", city: "Kingstad")
+
+    market2 = create(:market, state: "New York", name: "Schmidt, Hintz and Rempel", city: "Chaston")
+
+    market3 = create(:market, state: "New York", name: "Bob the Builder", city: "Brooklyn")
+
+    get "/api/v0/markets/search", params: {name: "Bob the Builder"}
+    
+    market_search = JSON.parse(response.body, symbolize_names: true)
+
+    expect(response).to be_successful
+    expect(response.status).to eq(200)
+    expect(market_search).to be_a(Hash)
+    expect(market_search).to have_key(:data)
+    expect(market_search[:data].count).to eq(1)
+    expect(market_search[:data]).to be_an(Array)
+    expect(market_search[:data][0]).to be_an(Hash)
+    expect(market_search[:data][0]).to have_key(:id)
+    expect(market_search[:data][0][:id]).to eq(market3.id.to_s)
+  end
+
+
+  it 'cannot search for markets by just city' do
+    market1 = create(:market, state: "Oregon", name: "Adams-Parker", city: "Kingstad")
+
+    market2 = create(:market, state: "New York", name: "Schmidt, Hintz and Rempel", city: "Chaston")
+
+    market3 = create(:market, state: "New York", name: "Bob the Builder", city: "Brooklyn")
+
+    get "/api/v0/markets/search", params: {city: "Brooklyn"}
+    
+    market_search = JSON.parse(response.body, symbolize_names: true)
+
+    expect(response).to_not be_successful
+    expect(response.status).to eq(422)
+    expect(market_search[:errors][0][:detail]).to eq("Invalid set of parameters. Please provide a valid set of parameters to perform a search with this endpoint.")
+  end
+
+  it 'cannot search for markets by just city/name' do
+    market1 = create(:market, state: "Oregon", name: "Adams-Parker", city: "Kingstad")
+
+    market2 = create(:market, state: "New York", name: "Schmidt, Hintz and Rempel", city: "Chaston")
+
+    market3 = create(:market, state: "New York", name: "Bob the Builder", city: "Brooklyn")
+
+    get "/api/v0/markets/search", params: {city: "Brooklyn", name: "Bob the Builder"}
+    
+    market_search = JSON.parse(response.body, symbolize_names: true)
+
+    expect(response).to_not be_successful
+    expect(response.status).to eq(422)
+    expect(market_search[:errors][0][:detail]).to eq("Invalid set of parameters. Please provide a valid set of parameters to perform a search with this endpoint.")
+  end
+
+  it 'can find the closest atm to a market' do
+    market1 = Market.create({:id=>159,
+    :name=>"Adams-Parker",
+    :street=>"2693 Shantell Ranch",
+    :city=>"Kingstad",
+    :county=>"Autumn Acres",
+    :state=>"Oregon",
+    :zip=>"19879",
+    :lat=>"37.583311",
+    :lon=>"-79.048573"})
+
+    market2 = Market.create({id: 455,
+      name: "Schmidt, Hintz and Rempel",
+      street: "377 Von Plains",
+      city: "Chaston",
+      county: "Royal Square",
+      state: "New York",
+      zip: "31983-5120",
+      lat: "-22.5470074648",
+      lon: "102.7254812942"})
+
+    get "/api/v0/markets/#{market1.id}/nearest_atms"
+
+    atm_request = JSON.parse(response.body, symbolize_names: true)
     require 'pry'; binding.pry
   end
-
-  it 'cannot search for markets by just city or city/name' do
-
-  end
-
 end
