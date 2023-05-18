@@ -194,13 +194,13 @@
           1,
           1,
           5,
+          23,
           5,
+          23,
           5,
-          5,
-          5,
-          5,
-          5,
-          5,
+          23,
+          23,
+          23,
           null,
           null
         ]
@@ -220,6 +220,7 @@
       },
       "/Users/reillymiller/turing_work/mod3/market_money/config/routes.rb": {
         "lines": [
+          1,
           1,
           1,
           1,
@@ -252,6 +253,10 @@
           1,
           4,
           null,
+          null,
+          1,
+          5,
+          null,
           null
         ]
       },
@@ -267,6 +272,7 @@
           1,
           1,
           1,
+          1,
           null,
           null,
           1,
@@ -286,7 +292,33 @@
           null,
           null,
           1,
+          5,
+          5,
           null,
+          null,
+          1,
+          null,
+          null,
+          null,
+          1,
+          1,
+          7,
+          2,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          1,
+          7,
+          null,
+          null,
+          1,
+          6,
           null,
           null
         ]
@@ -436,6 +468,6 @@
         ]
       }
     },
-    "timestamp": 1684362528
+    "timestamp": 1684436723
   }
 }
