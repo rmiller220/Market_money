@@ -193,11 +193,11 @@ describe 'Markets API' do
       lat: "-22.547007464861437",
       lon: "102.72548129421153"})
     query = {city: "Chaston", name: "Schmidt, Hintz and Rempel", state: "New York"}
-require 'pry'; binding.pry
+
     get "/api/v0/markets/search", params: query
     
     market_search = JSON.parse(response.body, symbolize_names: true)
-    require 'pry'; binding.pry
+
     expect(response).to be_successful
     expect(response.status).to eq(200)
 
@@ -345,5 +345,32 @@ require 'pry'; binding.pry
     expect(response).to_not be_successful
     expect(response.status).to eq(422)
     expect(market_search[:errors][0][:detail]).to eq("Invalid set of parameters. Please provide a valid set of parameters to perform a search with this endpoint.")
+  end
+
+  it 'can find the closest atm to a market' do
+    market1 = Market.create({:id=>159,
+    :name=>"Adams-Parker",
+    :street=>"2693 Shantell Ranch",
+    :city=>"Kingstad",
+    :county=>"Autumn Acres",
+    :state=>"Oregon",
+    :zip=>"19879",
+    :lat=>"37.583311",
+    :lon=>"-79.048573"})
+
+    market2 = Market.create({id: 455,
+      name: "Schmidt, Hintz and Rempel",
+      street: "377 Von Plains",
+      city: "Chaston",
+      county: "Royal Square",
+      state: "New York",
+      zip: "31983-5120",
+      lat: "-22.5470074648",
+      lon: "102.7254812942"})
+
+    get "/api/v0/markets/#{market1.id}/nearest_atms"
+
+    atm_request = JSON.parse(response.body, symbolize_names: true)
+    require 'pry'; binding.pry
   end
 end
