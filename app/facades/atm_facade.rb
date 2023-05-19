@@ -8,6 +8,10 @@ class AtmFacade
   end
   
   def atm_details
-    Atm.new(AtmService.new.closest_atm(@lon, @lat))
+     json = AtmService.new.closest_atm(@lon, @lat)
+    #  require 'pry'; binding.pry
+     json[:results].map do |result|
+      Atm.new(result)
+     end
   end
 end
