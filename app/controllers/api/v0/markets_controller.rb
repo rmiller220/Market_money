@@ -28,7 +28,7 @@ class Api::V0::MarketsController < ApplicationController
   def nearest_atms
     market = Market.find_by_id(params[:id])
     if market.nil?
-      require 'pry'; binding.pry
+      # require 'pry'; binding.pry
       render json:  {
         "errors": [
           {
@@ -37,7 +37,7 @@ class Api::V0::MarketsController < ApplicationController
         ]
       }, status: 404
     else
-      render json: AtmFacade.new(market).atm_details
+      render json: AtmSerializer.new(AtmFacade.new(market).atm_details), status: 200
     end
   end
 
@@ -50,7 +50,7 @@ class Api::V0::MarketsController < ApplicationController
               "detail": "Invalid set of parameters. Please provide a valid set of parameters to perform a search with this endpoint."
               }
               ]
-              }, status: 422
+              }, status: 404
       end
     end
 
