@@ -6,16 +6,17 @@ RSpec.describe AtmFacade do
       market = create(:market, lat: 37.583311, lon: -79.048573)
       facade1 = AtmFacade.new(market)
 
-      expect(facade1.atm_details).to be_a(Atm)  
+      expect(facade1.atm_details).to be_an(Array)  
       
-      atm = facade1.atm_details
+      facade1.atm_details.each do |atm|
 
       expect(atm).to be_a(Atm)
       expect(atm.address).to be_a(String)
-      expect(atm.dist).to be_a(Float)
+      expect(atm.distance).to be_a(Float)
       expect(atm.lat).to be_a(Float)
       expect(atm.lon).to be_a(Float)
       expect(atm.name).to be_a(String)
+      end
     end
   end
 end
