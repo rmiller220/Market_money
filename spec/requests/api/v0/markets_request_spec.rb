@@ -327,7 +327,7 @@ describe 'Markets API' do
     market_search = JSON.parse(response.body, symbolize_names: true)
 
     expect(response).to_not be_successful
-    expect(response.status).to eq(422)
+    expect(response.status).to eq(404)
     expect(market_search[:errors][0][:detail]).to eq("Invalid set of parameters. Please provide a valid set of parameters to perform a search with this endpoint.")
   end
 
@@ -343,9 +343,12 @@ describe 'Markets API' do
     market_search = JSON.parse(response.body, symbolize_names: true)
 
     expect(response).to_not be_successful
-    expect(response.status).to eq(422)
+    expect(response.status).to eq(404)
     expect(market_search[:errors][0][:detail]).to eq("Invalid set of parameters. Please provide a valid set of parameters to perform a search with this endpoint.")
   end
+end
+
+describe 'markets nearest_atms' do
 
   it 'can find the closest atm to a market' do
     market1 = Market.create({:id=>159,
@@ -371,6 +374,32 @@ describe 'Markets API' do
     get "/api/v0/markets/#{market1.id}/nearest_atms"
 
     atm_request = JSON.parse(response.body, symbolize_names: true)
-    require 'pry'; binding.pry
+
+    expect(response).to be_successful
+    expect(response.status).to eq(200)
+    expect(atm_request).to be_a(Hash)
+    expect(atm_request).to have_key(:data)
+    expect(atm_request[:data]).to be_an(Array)
+    expect(atm_request[:data].count).to eq(10)
+  end
+
+  it 'cannot find the closest atm to a market that does not exist' do
+    market1 = Market.create({:id=>159,
+    :name=>"Adams-Parker",
+    :street=>"2693 Shantell Ranch",
+    :city=>"Kingstad",
+    :county=>"Autumn Acres",
+    :state=>"Oregon",
+    :zip=>"19879",
+    :lat=>"37.583311",
+    :lon=>"-79.048573"})
+
+    get "/api/v0/markets/123123123123/nearest_atms" 
+
+    atm_request = JSON.parse(response.body, symbolize_names: true)
+
+    expect(response).to_not be_successful
+    expect(response.status).to eq(404)
+    expect(atm_request[:errors][0][:detail]).to eq("Couldn't find Market with 'id'=123123123123")
   end
 end
